@@ -8,7 +8,7 @@
 #
 
 library(shiny)
-
+library(flexdashboard)
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
 
@@ -16,18 +16,17 @@ shinyUI(fluidPage(
     titlePanel("Old Faithful Geyser Data"),
 
     # Sidebar with a slider input for number of bins
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-            plotOutput("distPlot")
-        )
+    fluidRow(
+      column(6, wellPanel(
+        selectInput("working_hour","Number of Working Hours on an average typical working day",c("4-6", "7-9", "10-12", "14 or more")),
+        uiOutput('slider1'),
+        uiOutput('slider2'),
+        selectInput("breaks","Break from work after every (in mins)",c("15", "30", "60", "120"))
+      )),
+    ),
+    fluidRow(
+      column(6, wellPanel(
+        gaugeOutput('viz')
+      ))
     )
 ))
