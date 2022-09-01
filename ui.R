@@ -9,11 +9,13 @@
 
 library(shiny)
 library(flexdashboard)
+library(shinythemes)
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
+  theme = shinytheme("flatly"),
 
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
+      # Application title
+    titlePanel("Risk Analysis Meter"),
 
     # Sidebar with a slider input for number of bins
     fluidRow(
@@ -21,12 +23,13 @@ shinyUI(fluidPage(
         selectInput("working_hour","Number of Working Hours on an average typical working day",c("4-6", "7-9", "10-12", "14 or more")),
         uiOutput('slider1'),
         uiOutput('slider2'),
-        selectInput("breaks","Break from work after every (in mins)",c("15", "30", "60", "120"))
+        selectInput("breaks","Break from work after every (in mins)",c("15", "30", "60", "120")),
+        actionButton('go','Analyse')
       )),
     ),
     fluidRow(
       column(6, wellPanel(
-        gaugeOutput('viz')
+       gaugeOutput('viz')
       ))
     )
 ))

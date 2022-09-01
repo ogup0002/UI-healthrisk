@@ -25,12 +25,13 @@ shinyServer(function(input, output) {
         range1 = 14
       }
         
-      sliderInput("sitting", "Dynamic",
+      sliderInput("sitting", "Hours spent sitting on average",
                   min = 0, max = range1, value = 0)
 
     })
     
     output$slider2 <- renderUI({
+      range3=0
       if (input$working_hour == "4-6"){
         range2 = 6
       } else if (input$working_hour == "7-9"){
@@ -40,45 +41,54 @@ shinyServer(function(input, output) {
       } else {
         range2 = 14
       }
-      range3 = range2 - input$sitting
       
-      sliderInput("physical", "Dynamic1",
+      if (!is.null(input$sitting)){
+      range3 = range2 - input$sitting
+      }      
+      sliderInput("physical", "Hours spent in Physical Activity like Stretching",
                   min = 0, max = range3, value = 0)
+      
       
     })
     
-    output$viz <- renderGauge({
-      if (input$working_hour == "4-6"){
-        range4 = 6
-      } else if (input$working_hour == "7-9"){
-        range4 = 9
-      } else if (input$working_hour == "10-12"){
-        range4 = 12
-      } else {
-        range4 = 14
+    outs <- reactiveValues(out = 2)
+    observeEvent(input$go,{
+      
+      if (input$sitting < 4 && input$physical >= 1 && input$breaks < 60){
+        outs$out <- 0.5
+      } else if (input$sitting < 6 && input$physical >= 2 && input$breaks <= 60){
+        outs$out <- 0.5
+      } else if (input$sitting < 8  && input$physical >= 2 && input$breaks <= 60){
+        outs$out <- 1
+      } else if (input$sitting == 6 && input$physical < 2 && input$breaks <= 45){
+        outs$out <- 1
+      } else if (input$sitting >= 8 && input$physical <= 4 && input$breaks <= 60){
+        outs$out <- 2
+      } else if(input$sitting >= 8 && input$sitting < 11 && input$physical <= 4 && input$breaks > 45){
+        outs$out <- 2
+      } else if(input$sitting >= 10 && input$physical >= 4 && input$breaks <= 60){
+        outs$out <- 1
+      } else if(input$sitting >= 10 && input$physical <= 4 && input$breaks > 60){
+        outs$out <- 2
       }
-      if (range4 < 6 && input$sitting < 4 && input$physical >= 2 && input$breaks < 60){
-        out = 0
-      } else if (range4 < 9 && input$sitting < 6 && input$physical >= 2 && input$breaks <= 60){
-        out = 0
-      } else if (range4 < 9 && input$sitting > 6 && input$physical >= 2 && input$breaks <= 60){
-        out = 1
-      } else if (range4 < 6 && input$sitting == 6 && input$physical < 2 && input$breaks <= 45){
-        out = 1
-      } else if (range4 > 9 && input$sitting > 8 && input$physical > 4 && input$breaks <= 60){
-        out = 2
-      } else if (range4 > 9 && input$sitting > 8 && input$physical < 4 && input$breaks > 45){
-        out = 2
-      }
+      
+      
+      output$viz <- renderGauge({
         
-      gauge(input$out, 
-            min = 0, 
-            max = 2, 
-            sectors = gaugeSectors(success = c(0, 0.9), 
-                                   warning = c(1,1.9),
-                                   danger = c(2,3)))
-     
+        gauge(outs$out, 
+              min = 0, 
+              max = 2, 
+              sectors = gaugeSectors(success = c(0, 0.9), 
+                                     warning = c(1,1.9),
+                                     danger = c(2,3)),
+              label = 'Risk Factor'
+              )
+        
+      })
+      
     })
+    
+    
 
 })
 
