@@ -9,6 +9,11 @@
 
 library(shiny)
 library(flexdashboard)
+library(RMySQL)
+
+
+
+
 
   
 # Define server logic required to draw a histogram
@@ -51,13 +56,17 @@ shinyServer(function(input, output) {
       
     })
     
-    outs <- reactiveValues(out = 2)
+    outs <- reactiveValues(out = 0.5)
     observeEvent(input$go,{
       
       if (input$sitting < 4 && input$physical >= 1 && input$breaks < 60){
         outs$out <- 0.5
+      } else if (input$sitting == 0  && input$physical >= 0 && input$breaks < 120){
+        outs$out <- 0.5
       } else if (input$sitting < 6 && input$physical >= 2 && input$breaks <= 60){
         outs$out <- 0.5
+      } else if (input$sitting < 6 && input$physical < 2 && input$breaks <= 60){
+        outs$out <- 1
       } else if (input$sitting < 8  && input$physical >= 2 && input$breaks <= 60){
         outs$out <- 1
       } else if (input$sitting == 6 && input$physical < 2 && input$breaks <= 45){
@@ -85,7 +94,18 @@ shinyServer(function(input, output) {
               )
         
       })
+      mysqlconnection = dbConnect(RMySQL::MySQL(),
+                                  dbname='sittofit',
+                                  host='sit-to-fit.clnlbyaislb7.ap-southeast-2.rds.amazonaws.com',
+                                  port=3306,
+                                  user='admin',
+                                  password='j54xAHG3Rw1uy2zJZ7qT')
       
+      
+      # workinghours, sittinghours, physicalhours, breaks, risknumber
+      query <- paste("insert into risks () values (",2,",",input$sitting,",", input$physical,",", input$breaks,",", 2, ");")
+      res <- dbSendQuery(mysqlconnection, query)
+
     })
     
     
