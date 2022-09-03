@@ -94,6 +94,11 @@ shinyServer(function(input, output) {
               )
         
       })
+      
+
+    })
+    
+    observeEvent(input$send,{
       mysqlconnection = dbConnect(RMySQL::MySQL(),
                                   dbname='sittofit',
                                   host='sit-to-fit.clnlbyaislb7.ap-southeast-2.rds.amazonaws.com',
@@ -105,7 +110,11 @@ shinyServer(function(input, output) {
       # workinghours, sittinghours, physicalhours, breaks, risknumber
       query <- paste("insert into risks () values (",2,",",input$sitting,",", input$physical,",", input$breaks,",", 2, ");")
       res <- dbSendQuery(mysqlconnection, query)
-
+      print('SENDING')
+    })
+    output$plot <- renderPlot({
+      fetch <- dbGetQuery(mysqlconnection, "SELECT * FROM risks")
+      ggplot2(fetch, aes)
     })
     
     

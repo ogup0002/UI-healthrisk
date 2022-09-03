@@ -10,6 +10,7 @@
 library(shiny)
 library(flexdashboard)
 library(shinythemes)
+library(shinyBS)
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
   theme = shinytheme("flatly"),
@@ -24,7 +25,11 @@ shinyUI(fluidPage(
         uiOutput('slider1'),
         uiOutput('slider2'),
         selectInput("breaks","Break from work after every (in mins)",c("15", "30", "60", "120")),
-        actionButton('go','Analyse')
+        
+        fluidRow(wellPanel(actionButton('go','Analyse'),
+                           
+               actionButton('send','Send Your Statistics')))
+        
       )),
     ),
     fluidRow(
