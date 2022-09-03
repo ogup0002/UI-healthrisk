@@ -6,12 +6,12 @@
 #
 #    http://shiny.rstudio.com/
 #
-
+library(lessR)
 library(shiny)
 library(flexdashboard)
 library(RMySQL)
 
-
+library(plyr)
 
 
 
@@ -110,11 +110,34 @@ shinyServer(function(input, output) {
       # workinghours, sittinghours, physicalhours, breaks, risknumber
       query <- paste("insert into risks () values (",2,",",input$sitting,",", input$physical,",", input$breaks,",", 2, ");")
       res <- dbSendQuery(mysqlconnection, query)
+      #on.exit(dbDisconnect(mysqlconnection)) NOT WORKING
       print('SENDING')
     })
     output$plot <- renderPlot({
+      mysqlconnection = dbConnect(RMySQL::MySQL(),
+                                  dbname='sittofit',
+                                  host='sit-to-fit.clnlbyaislb7.ap-southeast-2.rds.amazonaws.com',
+                                  port=3306,
+                                  user='admin',
+                                  password='j54xAHG3Rw1uy2zJZ7qT')
       fetch <- dbGetQuery(mysqlconnection, "SELECT * FROM risks")
-      ggplot2(fetch, aes)
+      print(fetch)
+      if (input$viz_type == 'Sitting Hours'){
+            co <- count(fetch, 'sittinghours')
+            #lapply( dbListConnections( dbDriver( drv = "MySQL")), dbDisconnect) #closes all connections
+        PieChart(sittinghours, data = co, main = NULL, hole = 0.1, fill = 'viridis')
+      }
+      else if (input$viz_type == 'Physical Activity Hours while working'){
+        co <- count(fetch, 'physicalhours')
+        #lapply( dbListConnections( dbDriver( drv = "MySQL")), dbDisconnect) #closes all connections
+        PieChart(sittinghours, data = co, main = NULL, hole = 0.1, fill = 'viridis')
+      }
+      else if (input$viz_type == 'Break interval during Sitting'){
+        co <- count(fetch, 'breaks')
+        #lapply( dbListConnections( dbDriver( drv = "MySQL")), dbDisconnect) #closes all connections
+        PieChart(sittinghours, data = co, main = NULL, hole = 0.1, fill = 'viridis')
+      }
+      
     })
     
     

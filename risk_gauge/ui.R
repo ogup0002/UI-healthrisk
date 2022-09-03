@@ -6,11 +6,12 @@
 #
 #    http://shiny.rstudio.com/
 #
-
+library('lessR')
 library(shiny)
 library(flexdashboard)
 library(shinythemes)
 library(shinyBS)
+
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
   theme = shinytheme("flatly"),
@@ -27,14 +28,24 @@ shinyUI(fluidPage(
         selectInput("breaks","Break from work after every (in mins)",c("15", "30", "60", "120")),
         
         fluidRow(wellPanel(actionButton('go','Analyse'),
-                           
-               actionButton('send','Send Your Statistics')))
-        
+              actionButton('send','Send Your Statistics'),
+             
+        ))
       )),
     ),
     fluidRow(
       column(6, wellPanel(
-       gaugeOutput('viz')
+       gaugeOutput('viz'),
+       
+       bsModal("modalExample", "Your plot", "go", size = "large",
+               
+       wellPanel(
+         selectInput('viz_type', 'View Statistics for: ',c("Sitting Hours on a working day","Physical Activity Hours while working", "Break interval during Sitting")),
+         verbatimTextOutput('textinfo'),
+         verbatimTextOutput('textstatic'),
+         plotOutput("plot"))
+       )
+       #plotOutput('plot')
       ))
     )
 ))
