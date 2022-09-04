@@ -15,6 +15,7 @@ library(shinyjs)
 library(plyr)
 library(shinyWidgets)
 library(ggplot2)
+library(dplyr)
 
 
 
@@ -35,9 +36,9 @@ shinyServer(function(input, output) {
   
   fetch = dbGetQuery(mysqlconnection, "SELECT * FROM risks")
   datacount = nrow(fetch)
-  sh_co = count(fetch, 'sittinghours')
-  ph_co = count(fetch, 'physicalhours')
-  b_co = count(fetch, 'breaks')
+  sh_co = count(fetch, sittinghours)
+  ph_co = count(fetch, physicalhours)
+  b_co = count(fetch, breaks)
   
   avg_s = round(mean(fetch$sittinghours),2)
   avg_p = round(mean(fetch$physicalhours),2)
@@ -204,7 +205,7 @@ shinyServer(function(input, output) {
 # Popup Plot
     output$plot <- renderPlot({
       if (input$viz_type == 'Sitting Hours on a working day'){
-        ggplot(data=sh_co, aes(x=sittinghours, y=freq)) +
+        ggplot(data=sh_co, aes(x=sittinghours, y=n)) +
           geom_bar(stat="identity", fill="lightblue") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
                                             panel.background = element_blank(), axis.line = element_line(colour = "black"))
         
@@ -214,13 +215,13 @@ shinyServer(function(input, output) {
         
       } else if (input$viz_type == 'Physical Activity Hours while working'){
         
-        ggplot(data=ph_co, aes(x=physicalhours, y=freq)) +
+        ggplot(data=ph_co, aes(x=physicalhours, y=n)) +
           geom_bar(stat="identity", fill="lightblue") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
                                             panel.background = element_blank(), axis.line = element_line(colour = "black"))
         
       } else if (input$viz_type == 'Break interval during Sitting'){
         
-        ggplot(data=b_co, aes(x=breaks, y=freq)) +
+        ggplot(data=b_co, aes(x=breaks, y=n)) +
           geom_bar(stat="identity", fill="lightblue") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
                                             panel.background = element_blank(), axis.line = element_line(colour = "black"))
       }
