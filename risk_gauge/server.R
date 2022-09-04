@@ -32,11 +32,14 @@ shinyServer(function(input, output) {
   
   fetch <<- dbGetQuery(mysqlconnection, "SELECT * FROM risks")
   datacount <<- nrow(fetch)
+  sh_co <<- count(fetch, 'sittinghours')
+  ph_co <<- count(fetch, 'physicalhours')
+  b_co <<- count(fetch, 'breaks')
   
-  
-  
-  
-  
+  avg_s = round(mean(fetch$sittinghours),2)
+  avg_p = round(mean(fetch$physicalhours),2)
+  avg_b = round(mean(fetch$breaks),2)
+  #lapply( dbListConnections( dbDriver( drv = "MySQL")), dbDisconnect)
   
   
   
@@ -135,42 +138,18 @@ shinyServer(function(input, output) {
     
 # Popup Plot
     output$plot <- renderPlot({
-      mysqlconnection = dbConnect(RMySQL::MySQL(),
-                                  dbname='sittofit',
-                                  host='db.sittofit.tk',
-                                  port=3306,
-                                  user='sittofit',
-                                  password='0AxPzbedoJFNTfPj67Pr')
-      
-      
-      #fetch <- dbGetQuery(mysqlconnection, "SELECT * FROM risks")
-      datacount <- nrow(fetch)
-      print(fetch)
       if (input$viz_type == 'Sitting Hours on a working day'){
-            co <- count(fetch, 'sittinghours')
-            disp <- input$sitting
-            avg = mean(fetch$sittinghours)
-            #lapply( dbListConnections( dbDriver( drv = "MySQL")), dbDisconnect) #closes all connections
-        PieChart(sittinghours, data = co, main = NULL, hole = 0.1, fill = 'viridis')
+        PieChart(sittinghours, data = sh_co, main = 'Compare with other Melbournians!', hole = 0.3, fill = 'viridis')
       } else if (input$viz_type == 'Physical Activity Hours while working'){
-        co <- count(fetch, 'physicalhours')
-        disp <- input$physical
-        avg = mean(fetch$physicalhours)
-        #lapply( dbListConnections( dbDriver( drv = "MySQL")), dbDisconnect) #closes all connections
-        PieChart(physicalhours, data = co, main = NULL, hole = 0.1, fill = 'viridis')
+        PieChart(physicalhours, data = ph_co, main = 'Compare with other Melbournians!', hole = 0.3, fill = 'viridis')
       } else if (input$viz_type == 'Break interval during Sitting'){
-        co <- count(fetch, 'breaks')
-        disp <- input$breaks
-        avg = mean(fetch$breaks)
-        #lapply( dbListConnections( dbDriver( drv = "MySQL")), dbDisconnect) #closes all connections
-        PieChart(breaks, data = co, main = NULL, hole = 0.1, fill = 'viridis')
+        PieChart(breaks, data = b_co, main = 'Compare with other Melbournians!', hole = 0.3, fill = 'viridis')
       }
     })
 # Popup Text output    
     
     observeEvent(input$viz_type,{
       delay(3000)
-      print(datacount)
       if (input$viz_type == 'Sitting Hours on a working day'){
         disp <- input$sitting
         disp2 <- 'sitting hours is'} else if (input$viz_type == 'Physical Activity Hours while working'){
@@ -181,21 +160,41 @@ shinyServer(function(input, output) {
           disp2 <- 'breaks in between sitting hours is'
           }
       output$textinfo <- renderText({paste("Your", disp2, disp)})
-      output$textstatic <- renderText({paste("Compare it with other Melbournians!")})
-      #output$textstatic3 <- renderText({paste("The Average of Melbournians for", disp2, input$avg)})
-      #output$textstatic2 <- renderText({paste("Live Count of User data: ", input$datacount)})
+      output$textstatic1 <- renderText({paste("Live Count of User data: ", datacount)})
       output$textstatic3 <- renderValueBox({
         valueBox("Over Daily Value", HTML(paste0("The Average of Melbournians for", disp2, input$avg, sep="<br>")), icon = icon("exclamation-triangle"), color = "red")
       })
       output$textstatic2 <- renderValueBox(
-        #valueBox(value = "disp2", subtitle = "The Average of Melbournians for", icon = icon("exclamation-triangle"), color = "red", width = 4, href = NULL)
+        if (input$viz_type == 'Sitting Hours on a working day'){
+          disp2 <- 'sitting hours is'
         valueBox(
-          value = input$avg,
+          value = avg_s,
           subtitle = paste("is the Average", disp2,"of Melbournians."),
-          icon = icon("code"),
+          icon = icon("exclamation-triangle"),
           width = 2,
           color = "red",
           href = NULL)
+        }
+        else if (input$viz_type == 'Physical Activity Hours while working'){
+          disp2 <- 'physical activity hours while working is'
+          valueBox(
+            value = avg_p,
+            subtitle = paste("is the Average", disp2,"of Melbournians."),
+            icon = icon("exclamation-triangle"),
+            width = 2,
+            color = "red",
+            href = NULL)
+        }
+        else if (input$viz_type == 'Break interval during Sitting'){
+          disp2 <- 'breaks in between sitting hours is'
+          valueBox(
+            value = avg_b,
+            subtitle = paste("is the Average", disp2,"of Melbournians."),
+            icon = icon("exclamation-triangle"),
+            width = 2,
+            color = "red",
+            href = NULL)
+        }
       )
       
       
@@ -206,5 +205,5 @@ shinyServer(function(input, output) {
 })
 
 
-
+#lapply( dbListConnections( dbDriver( drv = "MySQL")), dbDisconnect)
 

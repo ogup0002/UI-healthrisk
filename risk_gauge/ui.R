@@ -44,7 +44,6 @@ shinyUI(fluidPage(
        wellPanel(
          selectInput('viz_type', 'View Statistics for: ',c("Sitting Hours on a working day","Physical Activity Hours while working", "Break interval during Sitting")),
          verbatimTextOutput('textinfo'),
-         verbatimTextOutput('textstatic'),
          plotOutput("plot")),
        #column(6, 
       #        verbatimTextOutput('textstatic3'),
@@ -52,7 +51,8 @@ shinyUI(fluidPage(
       # )
       fluidRow(
         #valueBoxOutput("textstatic3"),
-      valueBoxOutput("textstatic2")
+      valueBoxOutput("textstatic2"),
+      verbatimTextOutput('textstatic1'),
         
        )
        )
