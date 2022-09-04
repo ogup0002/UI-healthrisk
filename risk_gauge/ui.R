@@ -12,7 +12,7 @@ library(flexdashboard)
 library(shinythemes)
 library(shinyBS)
 library(shinyWidgets)
-
+library(shinydashboard)
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
   theme = shinytheme("flatly"),
@@ -68,6 +68,9 @@ shinyUI(fluidPage(
     ),
   fluidRow(
     column(6, wellPanel(
+      infoBoxOutput('ibox_sitting'),
+      infoBoxOutput('ibox_physical'),
+      infoBoxOutput('ibox_breaks')
       #valueBoxOutput()
     ))
   )

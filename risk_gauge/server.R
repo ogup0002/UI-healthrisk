@@ -14,7 +14,8 @@ library(RMySQL)
 library(shinyjs)
 library(plyr)
 library(shinyWidgets)
-#library(lessR)
+library(ggplot2)
+
 
 
 
@@ -203,11 +204,25 @@ shinyServer(function(input, output) {
 # Popup Plot
     output$plot <- renderPlot({
       if (input$viz_type == 'Sitting Hours on a working day'){
-        PieChart(sittinghours, data = sh_co, main = 'Compare with other Melbournians!', hole = 0.3, fill = 'viridis')
+        ggplot(data=sh_co, aes(x=sittinghours, y=freq)) +
+          geom_bar(stat="identity", fill="lightblue") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+                                            panel.background = element_blank(), axis.line = element_line(colour = "black"))
+        
+        
+       
+        
+        
       } else if (input$viz_type == 'Physical Activity Hours while working'){
-        PieChart(physicalhours, data = ph_co, main = 'Compare with other Melbournians!', hole = 0.3, fill = 'viridis')
+        
+        ggplot(data=ph_co, aes(x=physicalhours, y=freq)) +
+          geom_bar(stat="identity", fill="lightblue") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+                                            panel.background = element_blank(), axis.line = element_line(colour = "black"))
+        
       } else if (input$viz_type == 'Break interval during Sitting'){
-        PieChart(breaks, data = b_co, main = 'Compare with other Melbournians!', hole = 0.3, fill = 'viridis')
+        
+        ggplot(data=b_co, aes(x=breaks, y=freq)) +
+          geom_bar(stat="identity", fill="lightblue") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+                                            panel.background = element_blank(), axis.line = element_line(colour = "black"))
       }
     })
 # Popup Text output    
@@ -295,33 +310,87 @@ shinyServer(function(input, output) {
         )}
     })
 )
-    
-    observeEvent(input$go,
-                 output$ibox <- renderUI({
-                   R = calc_risk(input$sitting, input$physical, input$breaks)
+# Preventive Measures    
+    observeEvent(input$go,{
+                 R = calc_risk(input$sitting, input$physical, input$breaks)
+                 output$ibox_sitting <- renderInfoBox({
+                   
                    if (R < 4){
                      infoBox(
-                       "You are at Low Risk Sedentary Behaviour",
-                       "Read below about Recommended lifestyle changes!",
+                       "Reduce a bit of your sitting hours.",
+                       "Opt for Standing Desk and reduce your sitting hours.",
                        icon = icon("person"),
-                       color = 'green'
-                     )} 
+                       color = 'lime'
+                     )
+                   }
                    else if (R > 4 && R < 8){
                      infoBox(
-                       "You are at Medium Risk Sedentary Behaviour",
-                       "Read below about Recommended lifestyle changes!",
-                       icon = icon("exclamation"),
+                       "Consider sitting less throughout your day.",
+                       "Your sitting hours are high, reduce by opting for Standing desk. It will cause lower back issues in long-term from such inactivity.",
+                       icon = icon("person"),
+                       color = 'yellow'
+                     )}
+                   else {
+                     infoBox(
+                       "You are spending too much time sitting on desk.",
+                       "Sitting for such long hours can lead to health issues in a short span of time. Opt for Standing Desk and move around frequently.",
+                       icon = icon("person"),
+                       color = 'orange'
+                     )}
+                 })
+                 output$ibox_breaks <- renderInfoBox({
+                   
+                   if (R < 4){
+                     infoBox(
+                       "You are taking good short breaks!",
+                       "Breaks allow for our back to stretch, keep you off from strain.",
+                       icon = icon("hourglass-end"),
+                       color = 'lime'
+                     )
+                   }
+                   else if (R > 4 && R < 8){
+                     infoBox(
+                       "You are taking good breaks, just take in shorter intervals.",
+                       "Breaks are good for physical health, mind and also protects your eyes.",
+                       icon = icon("hourglass-start"),
+                       color = 'yellow'
+                     )}
+                   else {
+                     infoBox(
+                       "You are not taking enough breaks in between your working hours!!",
+                       "Take shorter break interval to relieve yourself from stress as it leads to other health concerns.",
+                       icon = icon("hourglass"),
+                       color = 'orange'
+                     )}
+                 })
+                 
+                 output$ibox_physical <- renderInfoBox({
+                   
+                   if (R < 4){
+                     infoBox(
+                       "You are doing good, but you can do a little better.",
+                       "Be active and keep moving around while working.",
+                       icon = icon("person-walking"),
+                       color = 'yellow'
+                     )
+                   }
+                   else if (R > 4 && R < 8){
+                     infoBox(
+                       "You are not engaging in physical activity enough!",
+                       "Walk, stretch while you work. Physical Inactivity leads to weight gain and other health concerns.",
+                       icon = icon("person-walking"),
                        color = 'orange'
                      )}
                    else {
                      infoBox(
                        "You are at High Risk Sedentary Behaviour",
-                       "Read below about Recommended lifestyle changes!",
-                       icon = icon("exclamation-triangle"),
+                       "Consider home workout while you work. Physical Inactivity leads to Obesity and other health concerns.",
+                       icon = icon("dumbbell"),
                        color = 'red'
                      )}
                  })
-    )
+    }
+                 )
 })
 
 
