@@ -46,9 +46,13 @@ shinyUI(fluidPage(
     
   fluidRow(
       column(6, wellPanel(
-       gaugeOutput('viz'),
-       fluidRow(wellPanel(actionButton('popup','Compare your statistics'))),
-       
+       column(6,wellPanel(gaugeOutput('viz', height = "100%"),
+                          br(),
+                          infoBoxOutput('ibox'),
+                          
+       )
+       ),
+       fluidRow(actionButton('popup','Compare your statistics', icon = icon('people-group'), style="color: black; background-color: #DCF0FF; border-color: #DCF0FF")),
        bsModal("modalExample", "Your plot", "popup", size = "large",
                
        wellPanel(

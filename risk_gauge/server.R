@@ -44,7 +44,65 @@ shinyServer(function(input, output) {
   lapply( dbListConnections( dbDriver( drv = "MySQL")), dbDisconnect)
   
 
+  calc_risk <- function(sit, phy, breaks){
+    if (between(sit, 0, 4) == TRUE){
+      if (between(phy, 0, 5) == TRUE){
+        val = runif(1, min=2, max=3)
+        adjust_breaks(breaks,val)
+      }
+      else if (between(phy, 5, 9) == TRUE){
+        val = runif(1, min=1, max=2)
+        adjust_breaks(breaks,val)
+      }
+      else{
+        val = runif(1, min=0, max=1)
+        adjust_breaks(breaks,val)
+      }
+    }
+    else if (between(sit, 4, 9) == TRUE){
+      if (between(phy, 0, 5) == TRUE){
+        val = runif(1, min=6, max=7)
+        adjust_breaks(breaks,val)
+      }
+      else if (between(phy, 7, 9) == TRUE){
+        val = runif(1, min=4, max=5)
+        adjust_breaks(breaks,val)
+      }
+      else{
+        val = runif(1, min=3, max=4)
+        adjust_breaks(breaks,val)
+      }
+    }
+    else{
+      if (between(phy, 0, 5) == TRUE){
+        val = runif(1, min=9, max=10)
+        adjust_breaks(breaks,val)
+      }
+      else if (between(phy, 7, 9) == TRUE){
+        val = runif(1, min=8, max=9)
+        adjust_breaks(breaks,val)
+      }
+      else{
+        val = runif(1, min=7, max=8)
+        adjust_breaks(breaks,val)
+      }
+    }
+  }
   
+  adjust_breaks <- function(breaks, val){
+    if (breaks == 15){
+      return(val-0.6)
+    }
+    else if (breaks == 30){
+      return(val-0.5)
+    }
+    else if (breaks == 60){
+      return(val-0.3)
+    }
+    else{
+      return(val-0.1)
+    }
+  }
   
   
   
@@ -95,32 +153,30 @@ shinyServer(function(input, output) {
     observeEvent(input$go,{
       
       ##LOGIC HERE
-      s = (input$sitting+1)
-      print(s)
-      p= input$physical+1
-      print(p)
-      b = as.numeric(input$breaks)/30
-      print(b)
-      w = range2/2
-      print(w)
-      R = ((s+b)/p)
-      print(R)
+      #s = (input$sitting+1)
+      #p= input$physical+1
+      #b = as.numeric(input$breaks)/30
+      #w = range2/2
+      #R = ((s+b)/p)
       
+      
+      
+      R = calc_risk(input$sitting, input$physical, input$breaks)
       
       output$viz <- renderGauge({
         
         gauge(R, 
               min = 0, 
-              max = 6, 
-              sectors = gaugeSectors(success = c(0, 1), 
-                                     warning = c(2,4),
-                                     danger = c(5,6)),
+              max = 10, 
+              sectors = gaugeSectors(success = c(0, 3), 
+                                     warning = c(3,7),
+                                     danger = c(7,10)),
               label = 'Risk Factor'
               )
         
       })
       
-
+    
     })
 # Send User Statistics
     observeEvent(input$send,{
@@ -213,7 +269,59 @@ shinyServer(function(input, output) {
     #  shinyalert("Success!", "Your statistics have been sent!.", type = "success")
     #})
     
-
+    observeEvent(input$go,
+    output$ibox <- renderInfoBox({
+      R = calc_risk(input$sitting, input$physical, input$breaks)
+      if (R < 4){
+        infoBox(
+          "You are at Low Risk Sedentary Behaviour",
+          "Read below about Recommended lifestyle changes!",
+          icon = icon("person"),
+          color = 'green'
+        )} 
+      else if (R > 4 && R < 8){
+        infoBox(
+          "You are at Medium Risk Sedentary Behaviour",
+          "Read below about Recommended lifestyle changes!",
+          icon = icon("exclamation"),
+          color = 'orange'
+        )}
+      else {
+        infoBox(
+          "You are at High Risk Sedentary Behaviour",
+          "Read below about Recommended lifestyle changes!",
+          icon = icon("exclamation-triangle"),
+          color = 'red'
+        )}
+    })
+)
+    
+    observeEvent(input$go,
+                 output$ibox <- renderUI({
+                   R = calc_risk(input$sitting, input$physical, input$breaks)
+                   if (R < 4){
+                     infoBox(
+                       "You are at Low Risk Sedentary Behaviour",
+                       "Read below about Recommended lifestyle changes!",
+                       icon = icon("person"),
+                       color = 'green'
+                     )} 
+                   else if (R > 4 && R < 8){
+                     infoBox(
+                       "You are at Medium Risk Sedentary Behaviour",
+                       "Read below about Recommended lifestyle changes!",
+                       icon = icon("exclamation"),
+                       color = 'orange'
+                     )}
+                   else {
+                     infoBox(
+                       "You are at High Risk Sedentary Behaviour",
+                       "Read below about Recommended lifestyle changes!",
+                       icon = icon("exclamation-triangle"),
+                       color = 'red'
+                     )}
+                 })
+    )
 })
 
 
