@@ -6,7 +6,7 @@
 #
 #    http://shiny.rstudio.com/
 #
-library(lessR)
+
 library(shiny)
 library(shinydashboard)
 library(flexdashboard)
@@ -14,6 +14,8 @@ library(RMySQL)
 library(shinyjs)
 library(plyr)
 library(shinyWidgets)
+#library(lessR)
+
 
 
 
@@ -30,18 +32,18 @@ shinyServer(function(input, output) {
                               password='0AxPzbedoJFNTfPj67Pr')
   
   
-  fetch <<- dbGetQuery(mysqlconnection, "SELECT * FROM risks")
-  datacount <<- nrow(fetch)
-  sh_co <<- count(fetch, 'sittinghours')
-  ph_co <<- count(fetch, 'physicalhours')
-  b_co <<- count(fetch, 'breaks')
+  fetch = dbGetQuery(mysqlconnection, "SELECT * FROM risks")
+  datacount = nrow(fetch)
+  sh_co = count(fetch, 'sittinghours')
+  ph_co = count(fetch, 'physicalhours')
+  b_co = count(fetch, 'breaks')
   
   avg_s = round(mean(fetch$sittinghours),2)
   avg_p = round(mean(fetch$physicalhours),2)
   avg_b = round(mean(fetch$breaks),2)
-  #lapply( dbListConnections( dbDriver( drv = "MySQL")), dbDisconnect)
+  lapply( dbListConnections( dbDriver( drv = "MySQL")), dbDisconnect)
   
-  
+
   
   
   
@@ -101,7 +103,7 @@ shinyServer(function(input, output) {
       print(b)
       w = range2/2
       print(w)
-      R = (s/p+b)/w
+      R = ((s+b)/p)
       print(R)
       
       
@@ -128,6 +130,12 @@ shinyServer(function(input, output) {
       #                            port=3306,
       #                            user='sittofit',
       #                            password='0AxPzbedoJFNTfPj67Pr')
+      mysqlconnection = dbConnect(RMySQL::MySQL(),
+                                  dbname='sittofit',
+                                  host='db.sittofit.tk',
+                                  port=3306,
+                                  user='sittofit',
+                                  password='0AxPzbedoJFNTfPj67Pr')
       
       # workinghours, sittinghours, physicalhours, breaks, risknumber
       query <- paste("insert into risks () values (",2,",",input$sitting,",", input$physical,",", input$breaks,",", 2, ");")
@@ -170,7 +178,7 @@ shinyServer(function(input, output) {
         valueBox(
           value = avg_s,
           subtitle = paste("is the Average", disp2,"of Melbournians."),
-          icon = icon("exclamation-triangle"),
+          icon = icon("circle-info"),
           width = 2,
           color = "red",
           href = NULL)
@@ -200,6 +208,10 @@ shinyServer(function(input, output) {
       
       })
     
+    #observeEvent(input$send, {
+      # Show a modal when the button is pressed
+    #  shinyalert("Success!", "Your statistics have been sent!.", type = "success")
+    #})
     
 
 })
