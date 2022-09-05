@@ -29,7 +29,7 @@ shinyUI(fluidPage(
 
     # Sidebar with a slider input for number of bins
     fluidRow(
-      column(6, style = "background-color:#DCF0FF;",wellPanel(
+      column(12, style = "background-color:#DCF0FF;",wellPanel(
         selectInput("working_hour","Number of Working Hours on an average typical working day",c("4-6", "7-9", "10-12", "14 or more")),
         uiOutput('slider1'),
         uiOutput('slider2'),
@@ -45,10 +45,10 @@ shinyUI(fluidPage(
     ),
     
   fluidRow(
-      column(6, wellPanel(
-       column(6,wellPanel(gaugeOutput('viz', height = "100%"),
+      column(12, wellPanel(
+       column(12,wellPanel(gaugeOutput('viz'),
                           br(),
-                          infoBoxOutput('ibox'),
+                          infoBoxOutput('ibox', width = 12),
                           
        )
        ),
@@ -67,10 +67,10 @@ shinyUI(fluidPage(
       ))
     ),
   fluidRow(
-    column(6, wellPanel(
-      infoBoxOutput('ibox_sitting'),
-      infoBoxOutput('ibox_physical'),
-      infoBoxOutput('ibox_breaks')
+    column(12, wellPanel(
+      fluidRow(infoBoxOutput('ibox_sitting', width = 12)),
+      fluidRow(infoBoxOutput('ibox_physical', width = 12)),
+      fluidRow(infoBoxOutput('ibox_breaks', width = 12))
       #valueBoxOutput()
     ))
   )

@@ -33,7 +33,7 @@ shinyServer(function(input, output) {
                               user='sittofit',
                               password='0AxPzbedoJFNTfPj67Pr')
   
-  
+  data = dbGetQuery(mysqlconnection, "select * from logic")
   fetch = dbGetQuery(mysqlconnection, "SELECT * FROM risks")
   datacount = nrow(fetch)
   sh_co = count(fetch, sittinghours)
@@ -46,49 +46,20 @@ shinyServer(function(input, output) {
   lapply( dbListConnections( dbDriver( drv = "MySQL")), dbDisconnect)
   
 
-  calc_risk <- function(sit, phy, breaks){
-    if (between(sit, 0, 4) == TRUE){
-      if (between(phy, 0, 5) == TRUE){
-        val = runif(1, min=2, max=3)
-        adjust_breaks(breaks,val)
-      }
-      else if (between(phy, 5, 9) == TRUE){
-        val = runif(1, min=1, max=2)
-        adjust_breaks(breaks,val)
-      }
-      else{
-        val = runif(1, min=0, max=1)
-        adjust_breaks(breaks,val)
-      }
+  calc_risk <- function(sit_hrs, phy_hrs, breaks){
+    #data <- read.csv("C:\\user\\ounam\\Downloads\\risk_calculator_data.csv", header = TRUE)
+    if (breaks == 15){
+      result <- data[data$sit == sit_hrs & data$phy == as.integer(phy_hrs), ]$val - 0.6
+    }else if (breaks == 30){
+      result <- data[data$sit == sit_hrs & data$phy == as.integer(phy_hrs), ]$val - 0.5
     }
-    else if (between(sit, 4, 9) == TRUE){
-      if (between(phy, 0, 5) == TRUE){
-        val = runif(1, min=6, max=7)
-        adjust_breaks(breaks,val)
-      }
-      else if (between(phy, 7, 9) == TRUE){
-        val = runif(1, min=4, max=5)
-        adjust_breaks(breaks,val)
-      }
-      else{
-        val = runif(1, min=3, max=4)
-        adjust_breaks(breaks,val)
-      }
+    else if (breaks == 60){
+      result <- data[data$sit == sit_hrs & data$phy == as.integer(phy_hrs), ]$val - 0.3
     }
     else{
-      if (between(phy, 0, 5) == TRUE){
-        val = runif(1, min=9, max=10)
-        adjust_breaks(breaks,val)
-      }
-      else if (between(phy, 7, 9) == TRUE){
-        val = runif(1, min=8, max=9)
-        adjust_breaks(breaks,val)
-      }
-      else{
-        val = runif(1, min=7, max=8)
-        adjust_breaks(breaks,val)
-      }
+      result <- data[data$sit == sit_hrs & data$phy == as.integer(phy_hrs), ]$val - 0.1
     }
+    return(result)
   }
   
   adjust_breaks <- function(breaks, val){
@@ -321,7 +292,8 @@ shinyServer(function(input, output) {
                        "Reduce a bit of your sitting hours.",
                        "Opt for Standing Desk and reduce your sitting hours.",
                        icon = icon("person"),
-                       color = 'lime'
+                       color = 'lime',
+                       width = 12
                      )
                    }
                    else if (R > 4 && R < 8){
