@@ -21,6 +21,8 @@ library(dplyr)
 
 
 
+
+
   
 # Server Logic
 shinyServer(function(input, output) {
@@ -192,9 +194,13 @@ shinyServer(function(input, output) {
         
       } else if (input$viz_type == 'Break interval during Sitting'){
         
-        ggplot(data=b_co, aes(x=breaks, y=n)) +
-          geom_bar(stat="identity", fill="lightblue") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                                            panel.background = element_blank(), axis.line = element_line(colour = "black"))
+        ggplot(data=b_co, aes(x="", y=n, fill = as.character(breaks))) +
+          geom_bar(stat="identity", width = 1)  +
+          coord_polar("y", start=0) + scale_fill_brewer(palette="Blues")+
+          theme_minimal() + labs(fill = "Breaks in between",
+                                 x = NULL,
+                                 y = NULL,
+                                 title = "Breakdown of Breaks in between working hours.")
       }
     })
 # Popup Text output    

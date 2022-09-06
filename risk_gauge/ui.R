@@ -14,6 +14,34 @@ library(shinyBS)
 library(shinyWidgets)
 library(shinydashboard)
 # Define UI for application that draws a histogram
+
+css <- '
+.tooltip {
+  pointer-events: none;
+}
+.tooltip > .tooltip-inner {
+  pointer-events: none;
+  background-color: #73AD21;
+  color: #FFFFFF;
+  border: 1px solid green;
+  padding: 10px;
+  font-size: 25px;
+  font-style: italic;
+  text-align: justify;
+  margin-left: 0;
+  max-width: 1000px;
+}
+.tooltip > .arrow::before {
+  border-right-color: #73AD21;
+}
+'
+
+js <- "
+$(function () {
+  $('[data-toggle=tooltip]').tooltip()
+})
+"
+
 shinyUI(fluidPage(
   theme = shinytheme("flatly"),
   useShinydashboard(),
@@ -38,7 +66,10 @@ shinyUI(fluidPage(
         fluidRow(wellPanel(actionButton('go','Analyse', icon("magnifying-glass"), 
                                         style="color: black; background-color: #DCF0FF; border-color: #DCF0FF"),
               actionButton('send','Send Your Statistics', icon("paper-plane"), 
-                           style="color: black; background-color: #DCF0FF; border-color: #DCF0FF", offset=10)
+                           style="color: black; background-color: #DCF0FF; border-color: #DCF0FF"),
+              span('Info', span(`data-toggle` = "tooltip", `data-placement` = "right",
+                                title = "Your input statistics will be sent to us. We do not collect your personal data.",
+                                icon("info-circle")))
              
         ))
       ))
@@ -53,6 +84,9 @@ shinyUI(fluidPage(
        )
        ),
        fluidRow(actionButton('popup','Compare your statistics', icon = icon('people-group'), style="color: black; background-color: #DCF0FF; border-color: #DCF0FF")),
+       span('Info', span(`data-toggle` = "tooltip", `data-placement` = "right",
+                         title = "Comparing will give you your standing among the Melbournian Working Lifestyle.",
+                         icon("info-circle"))),
        bsModal("modalExample", "Your plot", "popup", size = "large",
                
        wellPanel(
