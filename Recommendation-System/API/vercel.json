@@ -1,11 +1,15 @@
 {
-	"name": "recommendation API",
-	"version": 2,
-	"builds": [{
-		"src": "*py",
-		"use": "@liudonghua123/now-flask"
-	}],
-	"routes": [
-        { "src": "(.*)", "dest": "recommendation.py" }
+    "version": 2,
+    "builds": [
+        {
+            "src": "./recommendation.py",
+            "use": "@vercel/python"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "/"
+        }
     ]
 }
