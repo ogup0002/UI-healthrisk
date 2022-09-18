@@ -3,7 +3,8 @@
 
   <img src="sittofit_white_bold.png" alt="logo" width="200" height="auto" />
  </div>
- ## **BACKEND Repository for Sit-to-fit Website Product.**
+ 
+## **BACKEND Repository for Sit-to-fit Website Product.**
 ## About the project
 The product is designed for the working class adults in the age group of 18 to 24 years who have a Sedentary Lifestyle due to excessive desk jobs. The Sedentary Behaviour has been coined by WHO as **Sitting is the new Smoking**. The product takes the user on an interactive journey to learn about the long lasting repercussions of this lifestyle and provides intuitive and fun acitivities around Melbourne CBD to break the sedentary behaviour and engage in fun activities.
 ## Projects
