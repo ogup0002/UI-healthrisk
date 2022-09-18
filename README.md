@@ -12,7 +12,8 @@ The repository holds the Source code for our Interactive features that we have a
 1. Risk Meter Analysis
 2. Recommendation System
 ## Built With
-* [![Python][Python 3.9.7]][Python-url]
+
+* [![Python][python.org]][Python-url]
 * [![R-Studio][RStudio]][Rstudio-url]
 * [![R][R]][R-url]
 * [![Flask][Flask]][Flask-url]
@@ -25,7 +26,7 @@ Check out our website at https://sittofit.tk/
 Ounam Gupta - 31176097
 ## Contact
 
-Ounam Gupta - [@linkedin_handle](https://www.linkedin.com/in/ounamg008/) - ogup0002@student.monash.edu
+Ounam Gupta - [@LinkedIn-blue](https://www.linkedin.com/in/ounamg008/) - ogup0002@student.monash.edu
 
 [Python-url]: https://www.python.org/
 [Rstudio-url]: https://shiny.rstudio.com/
