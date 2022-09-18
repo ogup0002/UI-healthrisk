@@ -14,7 +14,7 @@ The repository holds the Source code for our Interactive features that we have a
 ## Built With
 
 * [![Python][python.org]][Python-url]
-* [![R-Studio][RStudio]][Rstudio-url]
+* [![R-Studio][rstudio.org]][Rstudio-url]
 * [![R][R]][R-url]
 * [![Flask][Flask]][Flask-url]
 * [![Heroku][Heroku]][Heroku-url]
@@ -27,7 +27,11 @@ Ounam Gupta - 31176097
 ## Contact
 
 Ounam Gupta - [@LinkedIn-blue](https://www.linkedin.com/in/ounamg008/) - ogup0002@student.monash.edu
-
+[python.org]: https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue
+[rstudio.org]: https://img.shields.io/badge/RStudio-75AADB?style=for-the-badge&logo=RStudio&logoColor=white
+[R]: https://img.shields.io/badge/R-276DC3?style=for-the-badge&logo=r&logoColor=white
+[Flask]: https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white
+[Heroku]: https://img.shields.io/badge/Heroku-430098?style=for-the-badge&logo=heroku&logoColor=white
 [Python-url]: https://www.python.org/
 [Rstudio-url]: https://shiny.rstudio.com/
 [R-url]: https://www.r-project.org/
