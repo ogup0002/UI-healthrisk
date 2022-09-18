@@ -27,6 +27,8 @@ Ounam Gupta - 31176097
 ## Contact
 
 Ounam Gupta - [@LinkedIn-blue](https://www.linkedin.com/in/ounamg008/) - ogup0002@student.monash.edu
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [python.org]: https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue
 [rstudio.org]: https://img.shields.io/badge/RStudio-75AADB?style=for-the-badge&logo=RStudio&logoColor=white
 [R]: https://img.shields.io/badge/R-276DC3?style=for-the-badge&logo=r&logoColor=white
