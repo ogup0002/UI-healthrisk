@@ -17,7 +17,7 @@ library(shinyWidgets)
 library(ggplot2)
 library(dplyr)
 
-
+library(shinyscroll)
 
 
 
@@ -25,7 +25,7 @@ library(dplyr)
 
   
 # Server Logic
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
 
   
   mysqlconnection = dbConnect(RMySQL::MySQL(),
@@ -38,14 +38,14 @@ shinyServer(function(input, output) {
   data = dbGetQuery(mysqlconnection, "select * from logic")
   fetch = dbGetQuery(mysqlconnection, "SELECT * FROM risks")
   datacount = nrow(fetch)
-  sh_co = count(fetch, sittinghours)
-  ph_co = count(fetch, physicalhours)
-  b_co = count(fetch, breaks)
+  sh_co = count(fetch$sittinghours)
+  ph_co = count(fetch$physicalhours)
+  b_co = count(fetch$breaks)
   
   avg_s = round(mean(fetch$sittinghours),2)
   avg_p = round(mean(fetch$physicalhours),2)
   avg_b = round(mean(fetch$breaks),2)
-  lapply( dbListConnections( dbDriver( drv = "MySQL")), dbDisconnect)
+  #lapply( dbListConnections( dbDriver( drv = "MySQL")), dbDisconnect)
   
 
   calc_risk <- function(sit_hrs, phy_hrs, breaks){
@@ -122,7 +122,13 @@ shinyServer(function(input, output) {
       
     })
     
-    
+
+# scroll
+    scol <- eventReactive(input$go, {
+      scroll("ibox") # scroll to plot
+      runif(100)
+    })
+        
 # Logic    
     outs <- reactiveValues(out = 0.5)
     observeEvent(input$go,{
@@ -148,6 +154,8 @@ shinyServer(function(input, output) {
                                      danger = c(7,10)),
               label = 'Risk Factor'
               )
+        
+        
         
       })
       
@@ -265,24 +273,31 @@ shinyServer(function(input, output) {
     observeEvent(input$go,
     output$ibox <- renderInfoBox({
       R = calc_risk(input$sitting, input$physical, input$breaks)
-      if (R < 4){
+      if (R < 2){
         infoBox(
-          "You are at Low Risk Sedentary Behaviour",
-          "Read below about Recommended lifestyle changes!",
+          "Your risk analysis.",
+          "You are at No Risk of Sedentary Behaviour",
           icon = icon("person"),
           color = 'green'
-        )} 
+        )}
+      else if (R > 2 && R < 4){
+        infoBox(
+          "Your risk analysis.",
+          "You are at Low Risk Sedentary Behaviour",
+          icon = icon("person"),
+          color = 'green'
+        )}
       else if (R > 4 && R < 8){
         infoBox(
+          "Your risk analysis.",
           "You are at Medium Risk Sedentary Behaviour",
-          "Read below about Recommended lifestyle changes!",
           icon = icon("exclamation"),
           color = 'orange'
         )}
       else {
         infoBox(
+          "Your risk analysis.",
           "You are at High Risk Sedentary Behaviour",
-          "Read below about Recommended lifestyle changes!",
           icon = icon("exclamation-triangle"),
           color = 'red'
         )}
@@ -291,9 +306,21 @@ shinyServer(function(input, output) {
 # Preventive Measures    
     observeEvent(input$go,{
                  R = calc_risk(input$sitting, input$physical, input$breaks)
+                 output$static <- renderText(
+                   {'Your recommended lifestyle changes!'}
+                 )
                  output$ibox_sitting <- renderInfoBox({
                    
-                   if (R < 4){
+                   if (R < 2){
+                     infoBox(
+                       "Your sitting hours are perfect.",
+                       "Your sedentary hours are below the risk index.",
+                       icon = icon("person"),
+                       color = 'lime',
+                       width = 12
+                     )
+                   }
+                   else if (R > 2 && R < 4){
                      infoBox(
                        "Reduce a bit of your sitting hours.",
                        "Opt for Standing Desk and reduce your sitting hours.",
@@ -370,8 +397,15 @@ shinyServer(function(input, output) {
                  })
     }
                  )
+  observeEvent(input$send,{
+      shinyjs::runjs('
+      document.getElementById("bottom").scrollIntoView();
+    ')
+   
+  })
+    
 })
 
-
 #lapply( dbListConnections( dbDriver( drv = "MySQL")), dbDisconnect)
+
 
