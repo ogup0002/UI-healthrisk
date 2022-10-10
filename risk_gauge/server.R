@@ -34,17 +34,17 @@ shinyServer(function(input, output, session) {
                               port=3306,
                               user='sittofit',
                               password='0AxPzbedoJFNTfPj67Pr')
-  
+
   data = dbGetQuery(mysqlconnection, "select * from logic")
-  fetch = dbGetQuery(mysqlconnection, "SELECT * FROM risks")
-  datacount = nrow(fetch)
-  sh_co = count(fetch$sittinghours)
-  ph_co = count(fetch$physicalhours)
-  b_co = count(fetch$breaks)
-  
-  avg_s = round(mean(fetch$sittinghours),2)
-  avg_p = round(mean(fetch$physicalhours),2)
-  avg_b = round(mean(fetch$breaks),2)
+  # fetch = dbGetQuery(mysqlconnection, "SELECT * FROM risks")
+  # datacount = nrow(fetch)
+  # sh_co = count(fetch$sittinghours)
+  # ph_co = count(fetch$physicalhours)
+  # b_co = count(fetch$breaks)
+  # 
+  # avg_s = round(mean(fetch$sittinghours),2)
+  # avg_p = round(mean(fetch$physicalhours),2)
+  # avg_b = round(mean(fetch$breaks),2)
   #lapply( dbListConnections( dbDriver( drv = "MySQL")), dbDisconnect)
   
 
@@ -162,114 +162,114 @@ shinyServer(function(input, output, session) {
     
     })
 # Send User Statistics
-    observeEvent(input$send,{
-      #mysqlconnection = dbConnect(RMySQL::MySQL(),
-      #                            dbname='sittofit',
-      #                            host='db.sittofit.tk',
-      #                            port=3306,
-      #                            user='sittofit',
-      #                            password='0AxPzbedoJFNTfPj67Pr')
-      mysqlconnection = dbConnect(RMySQL::MySQL(),
-                                  dbname='sittofit',
-                                  host='db.sittofit.tk',
-                                  port=3306,
-                                  user='sittofit',
-                                  password='0AxPzbedoJFNTfPj67Pr')
-      
-      # workinghours, sittinghours, physicalhours, breaks, risknumber
-      query <- paste("insert into risks () values (",2,",",input$sitting,",", input$physical,",", input$breaks,",", 2, ");")
-      res <- dbSendQuery(mysqlconnection, query)
-      #on.exit(dbDisconnect(mysqlconnection)) NOT WORKING
-      print('SENDING')
-    })
+    # observeEvent(input$send,{
+    #   #mysqlconnection = dbConnect(RMySQL::MySQL(),
+    #   #                            dbname='sittofit',
+    #   #                            host='db.sittofit.tk',
+    #   #                            port=3306,
+    #   #                            user='sittofit',
+    #   #                            password='0AxPzbedoJFNTfPj67Pr')
+    #   mysqlconnection = dbConnect(RMySQL::MySQL(),
+    #                               dbname='sittofit',
+    #                               host='db.sittofit.tk',
+    #                               port=3306,
+    #                               user='sittofit',
+    #                               password='0AxPzbedoJFNTfPj67Pr')
+    #   
+    #   # workinghours, sittinghours, physicalhours, breaks, risknumber
+    #   query <- paste("insert into risks () values (",2,",",input$sitting,",", input$physical,",", input$breaks,",", 2, ");")
+    #   res <- dbSendQuery(mysqlconnection, query)
+    #   #on.exit(dbDisconnect(mysqlconnection)) NOT WORKING
+    #   print('SENDING')
+    # })
     
 # Popup Plot
-    output$plot <- renderPlot({
-      if (input$viz_type == 'Sitting Hours on a working day'){
-        ggplot(data=sh_co, aes(x=sittinghours, y=n)) +
-          geom_bar(stat="identity", fill="lightblue") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                                            panel.background = element_blank(), axis.line = element_line(colour = "black"))
-        
-        
-       
-        
-        
-      } else if (input$viz_type == 'Physical Activity Hours while working'){
-        
-        ggplot(data=ph_co, aes(x=physicalhours, y=n)) +
-          geom_bar(stat="identity", fill="lightblue") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                                            panel.background = element_blank(), axis.line = element_line(colour = "black"))
-        
-      } else if (input$viz_type == 'Break interval during Sitting'){
-        
-        ggplot(data=b_co, aes(x="", y=n, fill = as.character(breaks))) +
-          geom_bar(stat="identity", width = 1)  +
-          coord_polar("y", start=0) + scale_fill_brewer(palette="Blues")+
-          theme_minimal() + labs(fill = "Breaks in between",
-                                 x = NULL,
-                                 y = NULL,
-                                 title = "Breakdown of Breaks in between working hours.")
-      }
-    })
+    # output$plot <- renderPlot({
+    #   if (input$viz_type == 'Sitting Hours on a working day'){
+    #     ggplot(data=sh_co, aes(x=sittinghours, y=n)) +
+    #       geom_bar(stat="identity", fill="lightblue") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+    #                                         panel.background = element_blank(), axis.line = element_line(colour = "black"))
+    #     
+    #     
+    #    
+    #     
+    #     
+    #   } else if (input$viz_type == 'Physical Activity Hours while working'){
+    #     
+    #     ggplot(data=ph_co, aes(x=physicalhours, y=n)) +
+    #       geom_bar(stat="identity", fill="lightblue") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+    #                                         panel.background = element_blank(), axis.line = element_line(colour = "black"))
+    #     
+    #   } else if (input$viz_type == 'Break interval during Sitting'){
+    #     
+    #     ggplot(data=b_co, aes(x="", y=n, fill = as.character(breaks))) +
+    #       geom_bar(stat="identity", width = 1)  +
+    #       coord_polar("y", start=0) + scale_fill_brewer(palette="Blues")+
+    #       theme_minimal() + labs(fill = "Breaks in between",
+    #                              x = NULL,
+    #                              y = NULL,
+    #                              title = "Breakdown of Breaks in between working hours.")
+    #   }
+    # })
 # Popup Text output    
     
-    observeEvent(input$viz_type,{
-      delay(3000)
-      if (input$viz_type == 'Sitting Hours on a working day'){
-        disp <- input$sitting
-        disp2 <- 'sitting hours is'} else if (input$viz_type == 'Physical Activity Hours while working'){
-          disp <- input$physical
-          disp2 <- 'physical activity hours while working is'
-        } else if (input$viz_type == 'Break interval during Sitting'){
-          disp <- input$breaks
-          disp2 <- 'breaks in between sitting hours is'
-          }
-      output$textinfo <- renderText({paste("Your", disp2, disp)})
-      output$textstatic1 <- renderText({paste("Live Count of User data: ", datacount)})
-      output$textstatic3 <- renderValueBox({
-        valueBox("Over Daily Value", HTML(paste0("The Average of Melbournians for", disp2, input$avg, sep="<br>")), icon = icon("exclamation-triangle"), color = "red")
-      })
-      output$textstatic2 <- renderValueBox(
-        if (input$viz_type == 'Sitting Hours on a working day'){
-          disp2 <- 'sitting hours is'
-        valueBox(
-          value = avg_s,
-          subtitle = paste("is the Average", disp2,"of Melbournians."),
-          icon = icon("circle-info"),
-          width = 2,
-          color = "red",
-          href = NULL)
-        }
-        else if (input$viz_type == 'Physical Activity Hours while working'){
-          disp2 <- 'physical activity hours while working is'
-          valueBox(
-            value = avg_p,
-            subtitle = paste("is the Average", disp2,"of Melbournians."),
-            icon = icon("exclamation-triangle"),
-            width = 2,
-            color = "red",
-            href = NULL)
-        }
-        else if (input$viz_type == 'Break interval during Sitting'){
-          disp2 <- 'breaks in between sitting hours is'
-          valueBox(
-            value = avg_b,
-            subtitle = paste("is the Average", disp2,"of Melbournians."),
-            icon = icon("exclamation-triangle"),
-            width = 2,
-            color = "red",
-            href = NULL)
-        }
-      )
-      
-      
-      })
+    # observeEvent(input$viz_type,{
+    #   delay(3000)
+    #   if (input$viz_type == 'Sitting Hours on a working day'){
+    #     disp <- input$sitting
+    #     disp2 <- 'sitting hours is'} else if (input$viz_type == 'Physical Activity Hours while working'){
+    #       disp <- input$physical
+    #       disp2 <- 'physical activity hours while working is'
+    #     } else if (input$viz_type == 'Break interval during Sitting'){
+    #       disp <- input$breaks
+    #       disp2 <- 'breaks in between sitting hours is'
+    #       }
+    #   output$textinfo <- renderText({paste("Your", disp2, disp)})
+    #   output$textstatic1 <- renderText({paste("Live Count of User data: ", datacount)})
+    #   output$textstatic3 <- renderValueBox({
+    #     valueBox("Over Daily Value", HTML(paste0("The Average of Melbournians for", disp2, input$avg, sep="<br>")), icon = icon("exclamation-triangle"), color = "red")
+    #   })
+    #   output$textstatic2 <- renderValueBox(
+    #     if (input$viz_type == 'Sitting Hours on a working day'){
+    #       disp2 <- 'sitting hours is'
+    #     valueBox(
+    #       value = avg_s,
+    #       subtitle = paste("is the Average", disp2,"of Melbournians."),
+    #       icon = icon("circle-info"),
+    #       width = 2,
+    #       color = "red",
+    #       href = NULL)
+    #     }
+    #     else if (input$viz_type == 'Physical Activity Hours while working'){
+    #       disp2 <- 'physical activity hours while working is'
+    #       valueBox(
+    #         value = avg_p,
+    #         subtitle = paste("is the Average", disp2,"of Melbournians."),
+    #         icon = icon("exclamation-triangle"),
+    #         width = 2,
+    #         color = "red",
+    #         href = NULL)
+    #     }
+    #     else if (input$viz_type == 'Break interval during Sitting'){
+    #       disp2 <- 'breaks in between sitting hours is'
+    #       valueBox(
+    #         value = avg_b,
+    #         subtitle = paste("is the Average", disp2,"of Melbournians."),
+    #         icon = icon("exclamation-triangle"),
+    #         width = 2,
+    #         color = "red",
+    #         href = NULL)
+    #     }
+    #   )
+    #   
+    #   
+    #   })
     
     #observeEvent(input$send, {
       # Show a modal when the button is pressed
     #  shinyalert("Success!", "Your statistics have been sent!.", type = "success")
     #})
-    
+# Risk Analysis    
     observeEvent(input$go,
     output$ibox <- renderInfoBox({
       R = calc_risk(input$sitting, input$physical, input$breaks)

@@ -78,11 +78,11 @@ shinyUI(fluidPage(
                              shiny::tagAppendAttributes(href = "##bottom"),
             
               #a(class = "btn-primary btn-lg", href = "##bottom"),            
-              actionButton('send','Send Your Statistics', icon("paper-plane"), 
-                           style="color: white; background-color: #1D65E4; border-color: #1D65E4"),
-              span('Info', span(`data-toggle` = "tooltip", `data-placement` = "right",
-                                title = "Your input statistics will be sent to us. We do not collect your personal data.",
-                                icon("info-circle")))
+              # actionButton('send','Send Your Statistics', icon("paper-plane"), 
+              #              style="color: white; background-color: #1D65E4; border-color: #1D65E4"),
+              # span('Info', span(`data-toggle` = "tooltip", `data-placement` = "right",
+              #                   title = "Your input statistics will be sent to us. We do not collect your personal data.",
+              #                   icon("info-circle")))
              
         ))
       ))
@@ -95,22 +95,22 @@ shinyUI(fluidPage(
                            gaugeOutput('viz'),
                           br(),
                         
-         fluidRow(actionButton('popup','Compare your statistics', icon = icon('people-group'), style="color: white; background-color: #1D65E4; border-color: #1D65E4"),
-         span('Info', span(`data-toggle` = "tooltip", `data-placement` = "right",
-                           title = "Comparing will give you your standing among the Melbournian Working Lifestyle.",
-                           icon("info-circle")))),
-         bsModal("modalExample", "Compare statistics", "popup", size = "large",
-                 
-                 wellPanel(style = "background-color:#FFFFFF",
-                           selectInput('viz_type', 'View Statistics for: ',c("Sitting Hours on a working day","Physical Activity Hours while working", "Break interval during Sitting")),
-                           verbatimTextOutput('textinfo'),
-                           #plotOutput("plot")
-                           ),
-                 fluidRow(
-                   valueBoxOutput("textstatic2"),
-                   verbatimTextOutput('textstatic1'),
-                 )
-         ),
+         # fluidRow(actionButton('popup','Compare your statistics', icon = icon('people-group'), style="color: white; background-color: #1D65E4; border-color: #1D65E4"),
+         # span('Info', span(`data-toggle` = "tooltip", `data-placement` = "right",
+         #                   title = "Comparing will give you your standing among the Melbournian Working Lifestyle.",
+         #                   icon("info-circle")))),
+         # bsModal("modalExample", "Compare statistics", "popup", size = "large",
+         #         
+         #         wellPanel(style = "background-color:#FFFFFF",
+         #                   selectInput('viz_type', 'View Statistics for: ',c("Sitting Hours on a working day","Physical Activity Hours while working", "Break interval during Sitting")),
+         #                   verbatimTextOutput('textinfo'),
+         #                   #plotOutput("plot")
+         #                   ),
+         #         fluidRow(
+         #           valueBoxOutput("textstatic2"),
+         #           verbatimTextOutput('textstatic1'),
+         #         )
+         # ),
          br(),
          br(),
          infoBoxOutput('ibox', width = 12),
